@@ -50,7 +50,7 @@ const serverlessConfiguration: Serverless = {
             includeModules: true,
         },
         customDomain: {
-            domainName: 'api.dev.appitzr.co',
+            domainName: 'api.dev.appetizr.co',
             basePath: 'venue',
             stage: '${opt:stage, "dev"}',
             createRoute53Record: true,
