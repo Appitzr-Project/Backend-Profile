@@ -14,7 +14,7 @@ app.use(express.json());
 app.use(helmet());
 
 // all router lists
-app.get('/profile', (req: Request, res: Response, next: NextFunction) => {
+app.get('/venue/profile', (req: Request, res: Response, next: NextFunction) => {
     return res.status(200).json({
         code: 200,
         message: 'success',
