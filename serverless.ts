@@ -1,11 +1,12 @@
 import type { Serverless } from 'serverless/aws';
 
 const serverlessConfiguration: Serverless = {
-    service: 'api-base',
+    service: 'backend-venue-profile',
     frameworkVersion: '2',
     // Add the serverless-webpack plugin
     plugins: [
         'serverless-webpack',
+        'serverless-domain-manager',
         'serverless-offline',
         'serverless-dotenv-plugin',
     ],
@@ -48,6 +49,12 @@ const serverlessConfiguration: Serverless = {
             webpackConfig: './webpack.config.js',
             includeModules: true,
         },
+        customDomain: {
+            domainName: 'api.dev.appitzr.co',
+            basePath: 'venue',
+            stage: '${opt:stage, "dev"}',
+            createRoute53Record: true,
+        }
     },
 };
 
