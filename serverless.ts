@@ -54,6 +54,11 @@ const serverlessConfiguration: Serverless = {
             basePath: 'venue',
             stage: '${opt:stage, "dev"}',
             createRoute53Record: true,
+            certificateName: 'api.dev.appetizr.co',
+            endpointType: 'regional',
+            securityPolicy: 'tls_1_2',
+            apiType: 'rest',
+            autoDomain: false,
         }
     },
 };
