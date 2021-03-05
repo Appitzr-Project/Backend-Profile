@@ -32,6 +32,12 @@ const serverlessConfiguration: Serverless = {
                         method: 'ANY',
                         path: '/',
                         cors: true,
+                        authorizer: {
+                            type: 'COGNITO_USER_POOLS',
+                            name: 'Cognito-1',
+                            arn: '${env.COGNITO_POOL_ID}',
+                            identitySource: 'method.request.header.Authorization',
+                        }
                     },
                 },
                 {
@@ -39,8 +45,14 @@ const serverlessConfiguration: Serverless = {
                         method: 'ANY',
                         path: '/{proxy+}',
                         cors: true,
+                        authorizer: {
+                            type: 'COGNITO_USER_POOLS',
+                            name: 'Cognito-2',
+                            arn: '${env.COGNITO_POOL_ID}',
+                            identitySource: 'method.request.header.Authorization'
+                        }
                     },
-                },
+                }
             ],
         },
     },
