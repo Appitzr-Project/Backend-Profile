@@ -3,6 +3,7 @@ import * as express from 'express';
 import { Request, Response, NextFunction } from 'express';
 import * as helmet from 'helmet';
 import * as serverless from 'serverless-http';
+import venueprofile from './route';
 
 // express instance
 const app = express();
@@ -14,15 +15,16 @@ app.use(express.json());
 app.use(helmet());
 
 // all router lists
-app.get('/venue/profile', (req: Request, res: Response, next: NextFunction) => {
+app.use('/venueprofile', venueprofile);
+
+// health check api
+app.get('/health-check', (req: Request, res: Response) => {
     return res.status(200).json({
         code: 200,
         message: 'success',
-        data: {
-            satu: 1,
-        }
+        headers: req.headers
     });
-});
+})
 
 // get all unrouted url
 app.all('*', (req: Request, res: Response, next: NextFunction) => {
