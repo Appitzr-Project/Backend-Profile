@@ -36,6 +36,8 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           registry-url: 'https://npm.pkg.github.com'
+          # Always Authenticated For Github Package
+          always-auth: true
           # Defaults to the user or organization that owns the workflow file
           scope: '@appitzr-project'
       - name: Install dependencies
