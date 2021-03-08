@@ -32,4 +32,8 @@ app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
 });
 
 // export to serverless
-export const handler = serverless(app);
+export const handler = serverless(app, {
+    request(request, event, context) {
+        request.context = event.requestContext;
+    },
+});
