@@ -17,15 +17,6 @@ app.use(helmet());
 // all router lists
 app.use('/venueprofile', venueprofile);
 
-// health check api
-app.get('/health-check', (req: Request, res: Response) => {
-    return res.status(200).json({
-        code: 200,
-        message: 'success',
-        headers: req.headers
-    });
-})
-
 // get all unrouted url
 app.all('*', (req: Request, res: Response, next: NextFunction) => {
     next(new Error(`Route Not Found: [${req.method}] ${req.path}`));

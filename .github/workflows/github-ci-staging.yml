@@ -27,6 +27,7 @@ jobs:
     strategy:
       matrix:
         node-version: [ 12.x ]
+
     steps:
       - name: Clone Repository
         uses: actions/checkout@v2
@@ -34,8 +35,15 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
+          registry-url: 'https://npm.pkg.github.com'
+          # Always Authenticated For Github Package
+          always-auth: true
+          # Defaults to the user or organization that owns the workflow file
+          scope: '@appitzr-project'
       - name: Install dependencies
         run: yarn --frozen-lockfile
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
       - name: serverless deploy
         uses: serverless/github-action@master
         with:
