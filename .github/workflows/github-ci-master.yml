@@ -5,7 +5,7 @@ name: Deploy master branch
 
 on:
   push:
-    branches: [master]
+    branches: [main]
 
 jobs:
   check:
@@ -16,8 +16,8 @@ jobs:
         with:
           body: |
             Commit telah kami terima, saat ini code terbaru akan di Deploy secara automatis ke:
-            - Domain: **https://xxxxxxxxx**
-            - Deploy Status: **https://github.com/<owner-name>/<repo-name>/actions**
+            - Domain: **http://api.appitzr.co/venueprofile**
+            - Deploy Status: **https://github.com/Appitzr-Project/Backend-Venue-Profile/actions**
             Anda akan menerima notifikasi jika deploy telah selesai dilakukan, harap menunggu notifikasi selanjutnya.!
 
   build:
@@ -38,10 +38,12 @@ jobs:
       - name: serverless deploy
         uses: serverless/github-action@master
         with:
-          args: deploy
+          args: -c "serverless deploy --stage prod --verbose"
+          entrypoint: /bin/bash
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          SLS_DEBUG: 1
 
   done:
     runs-on: ubuntu-latest
@@ -52,7 +54,7 @@ jobs:
         with:
           body: |
             Deploy sukses, anda bisa mengecek preview website di:
-            - Domain: **https://xxxxxxxxx**
-            - Deploy Status: **https://github.com/<owner-name>/<repo-name>/actions**
+            - Domain: **http://api.appitzr.co/venueprofile**
+            - Deploy Status: **https://github.com/Appitzr-Project/Backend-Venue-Profile/actions**
 
             Jika ada kendala, jangan ragu untuk menghubungi team devops.!
