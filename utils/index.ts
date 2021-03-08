@@ -1,7 +1,7 @@
 import { Request } from 'express';
 
 export interface ClaimsData {
-    [key: string]: string;
+    [key: string]: string[] | string;
 }
 
 export interface Claims {
