@@ -27,9 +27,6 @@ jobs:
     strategy:
       matrix:
         node-version: [ 12.x ]
-        registry-url: 'https://npm.pkg.github.com'
-        # Defaults to the user or organization that owns the workflow file
-        scope: '@appitzr-project'
 
     steps:
       - name: Clone Repository
@@ -38,6 +35,9 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
+          registry-url: 'https://npm.pkg.github.com'
+          # Defaults to the user or organization that owns the workflow file
+          scope: '@appitzr-project'
       - name: Install dependencies
         run: yarn --frozen-lockfile
         env:
