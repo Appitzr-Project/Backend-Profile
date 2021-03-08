@@ -35,7 +35,7 @@ const serverlessConfiguration: Serverless = {
                         authorizer: {
                             type: 'COGNITO_USER_POOLS',
                             name: 'Cognito-1',
-                            arn: '${env.COGNITO_POOL_ID}',
+                            arn: '${self:custom.project.cognito}',
                             identitySource: 'method.request.header.Authorization',
                         }
                     },
@@ -48,7 +48,7 @@ const serverlessConfiguration: Serverless = {
                         authorizer: {
                             type: 'COGNITO_USER_POOLS',
                             name: 'Cognito-2',
-                            arn: '${env.COGNITO_POOL_ID}',
+                            arn: '${self:custom.project.cognito}',
                             identitySource: 'method.request.header.Authorization'
                         }
                     },
@@ -61,12 +61,17 @@ const serverlessConfiguration: Serverless = {
             webpackConfig: './webpack.config.js',
             includeModules: true,
         },
+        project: {
+            cognito: '${env:COGNITO_POOL_ID}',
+            dev: 'api.dev.appetizr.co',
+            prod: 'api.appetizr.co',
+        },
         customDomain: {
-            domainName: 'api.dev.appetizr.co',
+            domainName: '${self:custom.project.${opt:stage, "dev"}}',
+            certificateName: '${self:custom.project.${opt:stage, "dev"}}',
             basePath: 'venueprofile',
             stage: '${opt:stage, "dev"}',
             createRoute53Record: true,
-            certificateName: 'api.dev.appetizr.co',
             endpointType: 'regional',
             securityPolicy: 'tls_1_2',
             apiType: 'rest',
