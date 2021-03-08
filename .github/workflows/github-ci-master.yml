@@ -43,7 +43,7 @@ jobs:
       - name: Install dependencies
         run: yarn --frozen-lockfile
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
       - name: serverless deploy
         uses: serverless/github-action@master
         with:
