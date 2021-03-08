@@ -63,7 +63,7 @@ const serverlessConfiguration: Serverless = {
         },
         customDomain: {
             domainName: 'api.dev.appetizr.co',
-            basePath: 'venue',
+            basePath: 'venueprofile',
             stage: '${opt:stage, "dev"}',
             createRoute53Record: true,
             certificateName: 'api.dev.appetizr.co',
