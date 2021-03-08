@@ -1,10 +1,11 @@
-import {Request, Response, NextFunction} from 'express';
+import { Response, NextFunction } from 'express';
 import { venueProfileType } from '@appitzr-project/db-model';
+import { RequestAuthenticated } from '../utils';
 
 /**
  * Index Data Function
  */
-export const profileIndex = (req: Request, res: Response, next: NextFunction) => {
+export const profileIndex = (req: RequestAuthenticated, res: Response, next: NextFunction) => {
     try {
 
         const venueProfile : venueProfileType = {
@@ -19,10 +20,22 @@ export const profileIndex = (req: Request, res: Response, next: NextFunction) =>
             lat: 333333
         }
 
+        // get context detail user
+        const { context } = req;
+
+        // return response
         return res.json({
-            'code': 200,
-            'message': 'success',
-            data: venueProfile
+            code: 200,
+            message: 'success',
+            data: {
+                profile: {
+                    email: context?.authorizer?.claims['email'],
+                    sub: context?.authorizer?.claims['sub'],
+                    groups: context?.authorizer?.claims['cognito:groups'],
+                    phone_number: context?.authorizer?.claims['phone_number']
+                },
+                venue: venueProfile
+            }
         })
     } catch (e) {
         next(e);
