@@ -36,6 +36,14 @@
     chalk "^2.0.0"
     js-tokens "^4.0.0"
 
+"@base-pojokan/auth-aws-cognito@^1.0.3":
+  version "1.0.3"
+  resolved "https://npm.pkg.github.com/download/@base-pojokan/auth-aws-cognito/1.0.3/a7ce1f2982ae065c56618a3c8c965aeb9ebefe5a6e845f8f68e7a6f9bda4ba21#2bc655be580b754085aa3c304c3b1fd50792be54"
+  integrity sha512-SOwyZnrClVX8zdpj4TCg/sXf6/ivcBBC2PWWlIcPbv/gshK53zjZe9oCjT9+0kdmKl3qnorC0aAnqbo1wdye6w==
+  dependencies:
+    aws-sdk "^2.850.0"
+    express "^4.17.1"
+
 "@discoveryjs/json-ext@^0.5.0":
   version "0.5.2"
   resolved "https://registry.npmjs.org/@discoveryjs/json-ext/-/json-ext-0.5.2.tgz#8f03a22a04de437254e8ce8cc84ba39689288752"
@@ -1353,6 +1361,21 @@ aws-sdk@^2.624.0, aws-sdk@^2.756.0, aws-sdk@^2.848.0, aws-sdk@^2.856.0:
   version "2.857.0"
   resolved "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.857.0.tgz#830fdabb716ca1b4b621053749e89119b77899cf"
   integrity sha512-GIdknKB08AKe4tL6T9kMWv2RZUAI044Z/PkJ0bd5thqDnct8AhEusIO0bpoQdM8RBWgjlB0AUBHroI7AdEnX8g==
+  dependencies:
+    buffer "4.9.2"
+    events "1.1.1"
+    ieee754 "1.1.13"
+    jmespath "0.15.0"
+    querystring "0.2.0"
+    sax "1.2.1"
+    url "0.10.3"
+    uuid "3.3.2"
+    xml2js "0.4.19"
+
+aws-sdk@^2.850.0:
+  version "2.860.0"
+  resolved "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.860.0.tgz#cc1abc37576c5b8cdcb3ca4117d69eb4e8656627"
+  integrity sha512-BUBWw28PNDhRDnPEnXiPEvgTWD8Iyq5pl9lk/WhXC/vkACJ3aUVe+sicezI1/JQRjLrO3R6w7X20YknVWfAibA==
   dependencies:
     buffer "4.9.2"
     events "1.1.1"
