@@ -5,7 +5,7 @@ import { RequestAuthenticated, validateGroup } from '@base-pojokan/auth-aws-cogn
 /**
  * Index Data Function
  */
-export const profileIndex = (req: RequestAuthenticated, res: Response, next: NextFunction) => {
+export const profileIndex = async (req: RequestAuthenticated, res: Response, next: NextFunction) => {
     try {
 
         const venueProfile : venueProfileType = {
@@ -21,7 +21,7 @@ export const profileIndex = (req: RequestAuthenticated, res: Response, next: Nex
         }
 
         // validate group
-        const userDetail = validateGroup(req, 'venue');
+        const userDetail = await validateGroup(req, 'venue');
 
         // return response
         return res.json({
