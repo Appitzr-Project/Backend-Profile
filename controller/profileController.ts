@@ -1,6 +1,6 @@
 import { Response, NextFunction } from 'express';
 import { venueProfileType } from '@appitzr-project/db-model';
-import { RequestAuthenticated } from '../utils';
+import { RequestAuthenticated, validateGroup } from '@base-pojokan/auth-aws-cognito';
 
 /**
  * Index Data Function
@@ -20,20 +20,15 @@ export const profileIndex = (req: RequestAuthenticated, res: Response, next: Nex
             lat: 333333
         }
 
-        // get context detail user
-        const { context } = req;
+        // validate group
+        const userDetail = validateGroup(req, 'venue');
 
         // return response
         return res.json({
             code: 200,
             message: 'success',
             data: {
-                profile: {
-                    email: context?.authorizer?.claims['email'],
-                    sub: context?.authorizer?.claims['sub'],
-                    groups: context?.authorizer?.claims['cognito:groups'],
-                    phone_number: context?.authorizer?.claims['phone_number']
-                },
+                profile: userDetail,
                 venue: venueProfile
             }
         })
