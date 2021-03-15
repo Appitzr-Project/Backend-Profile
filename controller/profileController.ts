@@ -106,7 +106,8 @@ export const profileStore = async (
         lat: venue.lat,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
-      }
+      },
+      ConditionExpression: 'attribute_not_exists(venueEmail)'
     }
 
     // save data to database
@@ -120,6 +121,15 @@ export const profileStore = async (
     });
 
   } catch (e) {
+    
+    /**
+     * Return error kalau expression data udh ada
+     */
+    if(e?.code == 'ConditionalCheckFailedException') {
+      next(new Error('Data Already Exist.!'));
+    }
+
+    // return default error
     next(e);
   }
 };
