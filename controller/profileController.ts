@@ -1,13 +1,11 @@
 import { Response, NextFunction } from "express";
 import { body, validationResult, ValidationChain } from 'express-validator';
 import { venueProfile, venueProfileModel } from "@appitzr-project/db-model";
-import {
-  RequestAuthenticated,
-  validateGroup,
-} from "@base-pojokan/auth-aws-cognito";
+import { RequestAuthenticated, validateGroup } from "@base-pojokan/auth-aws-cognito";
 import * as AWS from 'aws-sdk';
 import { v4 as uuidv4 } from 'uuid';
 
+// declare database dynamodb
 const ddb = new AWS.DynamoDB.DocumentClient({ endpoint: process.env.DYNAMODB_LOCAL });
 
 /**
@@ -41,27 +39,23 @@ export const profileIndex = async (
     // validate group
     const userDetail = await validateGroup(req, "venue");
 
-    // dynamodb parameter get items
-    const paramDB : AWS.DynamoDB.DocumentClient.QueryInput = {
+    // dynamodb parameter
+    const paramDB : AWS.DynamoDB.DocumentClient.GetItemInput = {
       TableName: venueProfileModel.TableName,
-      KeyConditionExpression: "#vEmail = :vEmail",
-      ExpressionAttributeNames: {
-        "#vEmail": "venueEmail"
-      },
-      ExpressionAttributeValues: {
-        ":vEmail": userDetail.email
-      },
-      Limit: 1,
+      Key: {
+        venueEmail: userDetail.email,
+        cognitoId: userDetail.sub
+      }
     }
 
     // query to database
-    const queryDB = await ddb.query(paramDB).promise();
+    const queryDB = await ddb.get(paramDB).promise();
 
     // return response
     return res.json({
       code: 200,
       message: "success",
-      data: queryDB
+      data: queryDB?.Item
     });
   } catch (e) {
     next(e);
@@ -94,11 +88,12 @@ export const profileStore = async (
     // get input
     const venue : venueProfile = req.body;
 
-    // create dynamodb params for save data
+    // dynamodb parameter
     const paramsDB : AWS.DynamoDB.DocumentClient.PutItemInput = {
       TableName: venueProfileModel.TableName,
       Item: {
         id: uuidv4(),
+        cognitoId: userDetail?.sub,
         venueEmail: userDetail?.email,
         venueName: venue.venueName,
         bankBSB: venue.bankBSB,
