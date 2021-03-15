@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/Appitzr-Project/Backend-Venue-Profile#readme",
   "dependencies": {
-    "@appitzr-project/db-model": "^1.0.7",
+    "@appitzr-project/db-model": "^1.0.8",
     "@base-pojokan/auth-aws-cognito": "^1.0.3",
     "aws-sdk": "^2.848.0",
     "body-parser": "^1.19.0",
