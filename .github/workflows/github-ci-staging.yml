@@ -35,16 +35,12 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
-          registry-url: 'https://npm.pkg.github.com'
-          # Always Authenticated For Github Package
-          always-auth: true
-          # Defaults to the user or organization that owns the workflow file
-          scope: '@appitzr-project'
       - name: Generate ~/.npmrc
         run: |
           echo "@base-pojokan:registry=https://npm.pkg.github.com/" > ~/.npmrc
           echo "@appitzr-project:registry=https://npm.pkg.github.com/" >> ~/.npmrc
           echo "//npm.pkg.github.com/:_authToken=${{ secrets.PERSONAL_TOKEN }}" >> ~/.npmrc
+          echo "registry=https://registry.npmjs.org/" >> ~/.npmrc
       - name: Install dependencies
         run: npm ci
         env:
