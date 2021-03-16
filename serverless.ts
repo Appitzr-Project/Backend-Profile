@@ -58,7 +58,6 @@ const serverlessConfiguration: Serverless = {
     },
     custom: {
         webpack: {
-            packager: 'yarn',
             webpackConfig: './webpack.config.js',
             includeModules: true,
         },
