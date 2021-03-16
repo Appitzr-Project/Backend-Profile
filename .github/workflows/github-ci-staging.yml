@@ -35,25 +35,25 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-          registry-url: 'https://npm.pkg.github.com'
-          # Always Authenticated For Github Package
-          always-auth: true
-          # Defaults to the user or organization that owns the workflow file
-          scope: '@appitzr-project'
+      - name: Generate ~/.npmrc
+        run: |
+          echo "@base-pojokan:registry=https://npm.pkg.github.com/" > ~/.npmrc
+          echo "@appitzr-project:registry=https://npm.pkg.github.com/" >> ~/.npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.PERSONAL_TOKEN }}" >> ~/.npmrc
+          echo "registry=https://registry.npmjs.org/" >> ~/.npmrc
       - name: Install dependencies
-        run: yarn --frozen-lockfile
+        run: npm ci
         env:
           NODE_AUTH_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
-      - name: serverless deploy
-        uses: serverless/github-action@master
-        with:
-          args: -c "serverless deploy --stage dev --verbose"
-          entrypoint: /bin/bash
+      - run: npm install serverless -g
+      - name: Serverless Deploy
+        run: serverless deploy --stage dev --verbose
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          SLS_DEBUG: 1
+          SLS_DEBUG: "*"
           COGNITO_POOL_ID: ${{ secrets.COGNITO_POOL_ID }}
+          NODE_AUTH_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
 
   done:
     runs-on: ubuntu-latest

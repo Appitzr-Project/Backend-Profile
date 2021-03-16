@@ -44,13 +44,13 @@ cp -r .env.example .env
 - Install Package dengan Yarn
 
 ```
-yarn install
+npm ci
 ```
 
 - Start Serverless Offline
 
 ```
-yarn dev
+npm run dev
 ```
 
 ## Header Token
