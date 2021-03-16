@@ -53,7 +53,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           SLS_DEBUG: "*"
           COGNITO_POOL_ID: ${{ secrets.COGNITO_POOL_ID }}
-          NODE_AUTH_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
+          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
 
   done:
     runs-on: ubuntu-latest

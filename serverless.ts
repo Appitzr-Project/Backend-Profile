@@ -22,6 +22,23 @@ const serverlessConfiguration: Serverless = {
         environment: {
             AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
         },
+        // Grant Access to DynamoDB
+        iamRoleStatements: [
+            {
+                Effect: 'Allow',
+                Action: [
+                    "dynamodb:BatchGetItem",
+                    "dynamodb:GetItem",
+                    "dynamodb:Query",
+                    "dynamodb:Scan",
+                    "dynamodb:BatchWriteItem",
+                    "dynamodb:PutItem",
+                    "dynamodb:UpdateItem",
+                    "dynamodb:DeleteItem"
+                ],
+                Resource: 'arn:aws:dynamodb:${opt:region, "ap-southeast-2"}:${env:AWS_ACCOUNT_ID}:table/VenueProfile'
+            }
+        ],
     },
     functions: {
         app: {
@@ -80,7 +97,15 @@ const serverlessConfiguration: Serverless = {
             securityPolicy: 'tls_1_2',
             apiType: 'rest',
             autoDomain: false,
-        }
+        },
+        dotenv: {
+            exclude: [
+                'AWS_ACCESS_KEY_ID',
+                'AWS_SECRET_ACCESS_KEY',
+                'AWS_REGION',
+                'DYNAMODB_LOCAL'
+            ],
+        },
     },
 };
 
