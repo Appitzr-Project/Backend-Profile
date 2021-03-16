@@ -59,7 +59,15 @@ const serverlessConfiguration: Serverless = {
     custom: {
         webpack: {
             webpackConfig: './webpack.config.js',
-            includeModules: true,
+            includeModules: {
+                forceInclude: [
+                    '@appitzr-project/db-model',
+                    '@base-pojokan/auth-aws-cognito'
+                ],
+                forceExclude: [
+                    'aws-sdk'
+                ],
+            },
         },
         project: {
             cognito: '${env:COGNITO_POOL_ID}',
