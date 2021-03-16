@@ -21,10 +21,7 @@ module.exports = {
         filename: '[name].js',
     },
     target: 'node',
-    externals: [nodeExternals([
-        '@appitzr-project/db-model',
-        '@base-pojokan/auth-aws-cognito'
-    ])],
+    externals: [nodeExternals()],
     module: {
         rules: [
             // all files with a `.ts` or `.tsx` extension will be handled by `ts-loader`
