@@ -39,8 +39,9 @@ jobs:
           # Always Authenticated For Github Package
           always-auth: true
           # Defaults to the user or organization that owns the workflow file
-          scope: '@appitzr-project'
-          scope: '@base-pojokan'
+          scope: 
+            - '@appitzr-project'
+            - '@base-pojokan'
       - name: Install dependencies
         run: yarn --frozen-lockfile
         env:
