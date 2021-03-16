@@ -1,7 +1,7 @@
 import { Response, NextFunction } from "express";
 import { body, validationResult, ValidationChain } from 'express-validator';
 import { cultureCategory, venueAttribute, venueProfile, venueProfileModel } from "@appitzr-project/db-model";
-import { RequestAuthenticated, validateGroup } from "@base-pojokan/auth-aws-cognito";
+import { RequestAuthenticated, userDetail, validateGroup } from "@base-pojokan/auth-aws-cognito";
 import * as AWS from 'aws-sdk';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -19,8 +19,8 @@ export const profileStoreValidate : ValidationChain[] = [
   body('phoneNumber').notEmpty().isString(),
   body('address').notEmpty().isString(),
   body('postalCode').notEmpty().isNumeric(),
-  body('long').notEmpty().isNumeric(),
-  body('lat').notEmpty().isNumeric(),
+  body('mapLong').notEmpty().isNumeric(),
+  body('mapLat').notEmpty().isNumeric(),
   body('cultureCategory').notEmpty().isIn(cultureCategory),
 ];
 
@@ -35,8 +35,8 @@ export const profileUpdateValidate : ValidationChain[] = [
   body('phoneNumber').notEmpty().isString(),
   body('address').notEmpty().isString(),
   body('postalCode').notEmpty().isNumeric(),
-  body('long').notEmpty().isNumeric(),
-  body('lat').notEmpty().isNumeric(),
+  body('mapLong').notEmpty().isNumeric(),
+  body('mapLat').notEmpty().isNumeric(),
   body('cultureCategory').notEmpty().isIn(cultureCategory),
 ];
 
@@ -54,15 +54,16 @@ export const profileIndex = async (
 ) => {
   try {
     // validate group
-    const userDetail = await validateGroup(req, "venue");
+    const user = await validateGroup(req, "venue");
 
     // dynamodb parameter
     const paramDB : AWS.DynamoDB.DocumentClient.GetItemInput = {
       TableName: venueProfileModel.TableName,
       Key: {
-        venueEmail: userDetail.email,
-        cognitoId: userDetail.sub
-      }
+        venueEmail: user.email,
+        cognitoId: user.sub
+      },
+      AttributesToGet: venueAttribute
     }
 
     // query to database
@@ -94,7 +95,7 @@ export const profileStore = async (
 ) => {
   try {
     // validate group
-    const userDetail = await validateGroup(req, "venue");
+    const user = userDetail(req);
 
     // exapress validate input
     const errors = validationResult(req);
@@ -108,8 +109,8 @@ export const profileStore = async (
     // venue profile input with typescript definition
     const venueInput : venueProfile = {
       id: uuidv4(),
-      cognitoId: userDetail?.sub,
-      venueEmail: userDetail?.email,
+      cognitoId: user?.sub,
+      venueEmail: user?.email,
       venueName: venue.venueName,
       bankBSB: venue.bankBSB,
       bankName: venue.bankName,
@@ -117,8 +118,8 @@ export const profileStore = async (
       phoneNumber: venue.phoneNumber,
       address: venue.address,
       postalCode: venue.postalCode,
-      long: venue.long,
-      lat: venue.lat,
+      mapLong: venue.mapLong,
+      mapLat: venue.mapLat,
       cultureCategory: venue.cultureCategory,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
@@ -163,7 +164,7 @@ export const profileUpdate = async (
 ) => {
   try {
     // validate group
-    const userDetail = await validateGroup(req, "venue");
+    const user = await validateGroup(req, "venue");
 
     // exapress validate input
     const errors = validationResult(req);
@@ -178,8 +179,8 @@ export const profileUpdate = async (
     const paramsDB : AWS.DynamoDB.DocumentClient.UpdateItemInput = {
       TableName: venueProfileModel.TableName,
       Key: {
-        venueEmail: userDetail.email,
-        cognitoId: userDetail.sub
+        venueEmail: user.email,
+        cognitoId: user.sub
       },
       UpdateExpression: `
         set
@@ -190,8 +191,8 @@ export const profileUpdate = async (
           phoneNumber = :pn,
           address = :adrs,
           postalCode = :pc,
-          maplong = :mlong,
-          maplat = :mlat,
+          mapLong = :mlong,
+          mapLat = :mlat,
           cultureCategory = :ccat,
           updatedAt = :ua
       `,
@@ -203,8 +204,8 @@ export const profileUpdate = async (
         ':pn': venue.phoneNumber,
         ':adrs': venue.address,
         ':pc': venue.postalCode,
-        ':mlong': venue.long,
-        ':mlat': venue.lat,
+        ':mlong': venue.mapLong,
+        ':mlat': venue.mapLat,
         ':ccat': venue.cultureCategory,
         ':ua': new Date().toISOString(),
       },
