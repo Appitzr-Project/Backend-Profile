@@ -45,7 +45,6 @@ jobs:
         run: npm ci
         env:
           NODE_AUTH_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
-      - run: npm install serverless -g
       - name: Serverless Deploy
         run: serverless deploy --stage prod --verbose
         env:
