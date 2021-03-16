@@ -60,10 +60,6 @@ const serverlessConfiguration: Serverless = {
         webpack: {
             webpackConfig: './webpack.config.js',
             includeModules: {
-                forceInclude: [
-                    '@appitzr-project/db-model',
-                    '@base-pojokan/auth-aws-cognito'
-                ],
                 forceExclude: [
                     'aws-sdk'
                 ],
