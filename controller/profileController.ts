@@ -94,7 +94,7 @@ export const profileStore = async (
   next: NextFunction
 ) => {
   try {
-    // validate group
+    // get userdetail from header
     const user = userDetail(req);
 
     // exapress validate input
