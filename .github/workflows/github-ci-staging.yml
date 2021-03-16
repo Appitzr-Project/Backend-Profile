@@ -40,6 +40,7 @@ jobs:
           always-auth: true
           # Defaults to the user or organization that owns the workflow file
           scope: '@appitzr-project'
+          scope: '@base-pojokan'
       - name: Install dependencies
         run: yarn --frozen-lockfile
         env:
@@ -54,6 +55,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           SLS_DEBUG: 1
           COGNITO_POOL_ID: ${{ secrets.COGNITO_POOL_ID }}
+          NODE_AUTH_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
 
   done:
     runs-on: ubuntu-latest
