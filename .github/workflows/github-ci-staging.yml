@@ -54,6 +54,7 @@ jobs:
           SLS_DEBUG: "*"
           COGNITO_POOL_ID: ${{ secrets.COGNITO_POOL_ID }}
           AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+          NODE_ENV: DEV
 
   done:
     runs-on: ubuntu-latest
