@@ -3,19 +3,27 @@ import * as express from 'express';
 import { Request, Response, NextFunction } from 'express';
 import * as helmet from 'helmet';
 import * as serverless from 'serverless-http';
-import venueprofile from './route';
+import * as cors from 'cors';
+import routes from './route';
 
 // express instance
 const app = express();
+
+// cors options
+const corsOptions : cors.CorsOptions = {
+    origin: 'https://*.appetizr.co',
+    optionsSuccessStatus: 200
+}
 
 // express middleware
 app.disable('x-powered-by');
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(helmet());
+app.use(cors(corsOptions));
 
 // all router lists
-app.use('/venueprofile', venueprofile);
+app.use('/venueprofile', routes);
 
 // get all unrouted url
 app.all('*', (req: Request, res: Response, next: NextFunction) => {
