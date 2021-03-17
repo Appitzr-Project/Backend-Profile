@@ -11,8 +11,10 @@ const app = express();
 
 // cors options
 const corsOptions : cors.CorsOptions = {
-    origin: 'https://*.appetizr.co',
-    optionsSuccessStatus: 200
+    // allow all origin from sub domain with https
+    origin: 'https:\/\/.*\.appetizr\.co$',
+    optionsSuccessStatus: 200,
+    credentials: true,
 }
 
 // express middleware
