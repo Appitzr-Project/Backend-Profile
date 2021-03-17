@@ -12,7 +12,7 @@ const app = express();
 // cors options
 const corsOptions : cors.CorsOptions = {
     // allow all origin from sub domain with https
-    origin: 'https:\/\/.*\.appetizr\.co$',
+    origin: '/https:\/\/.*\.appetizr\.co$/',
     optionsSuccessStatus: 200,
     credentials: true,
 }
