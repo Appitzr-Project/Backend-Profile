@@ -21,6 +21,7 @@ const serverlessConfiguration: Serverless = {
         },
         environment: {
             AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
+            NODE_ENV: '${env:NODE_ENV}'
         },
         // Grant Access to DynamoDB
         iamRoleStatements: [
@@ -33,11 +34,12 @@ const serverlessConfiguration: Serverless = {
                     "dynamodb:Scan",
                     "dynamodb:BatchWriteItem",
                     "dynamodb:PutItem",
-                    "dynamodb:UpdateItem",
-                    "dynamodb:DeleteItem"
+                    "dynamodb:UpdateItem"
                 ],
-                Resource: 'arn:aws:dynamodb:${opt:region, "ap-southeast-2"}:${env:AWS_ACCOUNT_ID}:table/VenueProfile'
-            }
+                Resource: [
+                    'arn:aws:dynamodb:${opt:region, "ap-southeast-2"}:${env:AWS_ACCOUNT_ID}:table/${env:NODE_ENV}_VenueProfile'
+                ],
+            },
         ],
     },
     functions: {
