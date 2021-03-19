@@ -6,9 +6,9 @@ import { profileIndex, profileStore, profileStoreValidate, profileUpdate, profil
 const route = express.Router();
 
 // Route List
-route.get('/', profileIndex);
-route.post('/', profileStoreValidate, profileStore);
-route.put('/', profileUpdateValidate, profileUpdate);
+route.get('/venue', profileIndex);
+route.post('/venue', profileStoreValidate, profileStore);
+route.put('/venue', profileUpdateValidate, profileUpdate);
 
 // health check api
 route.get('/health-check', (req: Request, res: Response) => {
