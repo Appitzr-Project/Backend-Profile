@@ -16,8 +16,8 @@ jobs:
         with:
           body: |
             Commit telah kami terima, saat ini code terbaru akan di Deploy secara automatis ke:
-            - Domain: **http://api.appitzr.co/venueprofile**
-            - Deploy Status: **https://github.com/Appitzr-Project/Backend-Venue-Profile/actions**
+            - Domain: **http://api.appitzr.co/profile**
+            - Deploy Status: **https://github.com/Appitzr-Project/Backend-Profile/actions**
             
             Anda akan menerima notifikasi jika deploy telah selesai dilakukan, harap menunggu notifikasi selanjutnya.!
 
@@ -65,7 +65,7 @@ jobs:
         with:
           body: |
             Deploy sukses, anda bisa mengecek preview website di:
-            - Domain: **http://api.appitzr.co/venueprofile**
-            - Deploy Status: **https://github.com/Appitzr-Project/Backend-Venue-Profile/actions**
+            - Domain: **http://api.appitzr.co/profile**
+            - Deploy Status: **https://github.com/Appitzr-Project/Backend-Profile/actions**
 
             Jika ada kendala, jangan ragu untuk menghubungi team devops.!

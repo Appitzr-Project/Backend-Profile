@@ -1,4 +1,4 @@
-# Backend Venue Profile
+# Backend Profile
 
 ## Github Package Private
 
@@ -25,14 +25,14 @@ Tutorial: https://github.com/base-pojokan/documentation/blob/main/github-package
 
 | Type | Route | Description |
 | ---- | ----- | ----------- |
-| GET | /venueprofile | Detail Profile Venue |
+| GET | /profile | Detail Profile |
 
 ## Development
 
 - Clone Repository
 
 ```
-git clone git@github.com:Appitzr-Project/Backend-Venue-Profile.git
+git clone git@github.com:Appitzr-Project/Backend-Profile.git
 ```
 
 - Copy **.env.example** ke **.env**

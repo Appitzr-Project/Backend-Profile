@@ -1,7 +1,7 @@
 import type { Serverless } from 'serverless/aws';
 
 const serverlessConfiguration: Serverless = {
-    service: 'backend-venue-profile',
+    service: 'backend-profile',
     frameworkVersion: '2',
     // Add the serverless-webpack plugin
     plugins: [

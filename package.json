@@ -1,5 +1,5 @@
 {
-  "name": "backend-venue-profile",
+  "name": "backend-profile",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -13,14 +13,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Appitzr-Project/Backend-Venue-Profile.git"
+    "url": "git+https://github.com/Appitzr-Project/Backend-Profile.git"
   },
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Appitzr-Project/Backend-Venue-Profile/issues"
+    "url": "https://github.com/Appitzr-Project/Backend-Profile/issues"
   },
-  "homepage": "https://github.com/Appitzr-Project/Backend-Venue-Profile#readme",
+  "homepage": "https://github.com/Appitzr-Project/Backend-Profile#readme",
   "dependencies": {
     "@appitzr-project/db-model": "^1.0.15",
     "@base-pojokan/auth-aws-cognito": "^1.0.11",
