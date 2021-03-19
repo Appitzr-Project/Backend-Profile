@@ -1,7 +1,8 @@
 import * as express from 'express';
 import { Request, Response } from 'express';
 import {
-    profileIndex, profileStore, profileStoreValidate, profileUpdate, profileUpdateValidate
+    profileChange,
+    profileIndex, profilePictureValidate, profileStore, profileStoreValidate, profileUpdate, profileUpdateValidate
 } from '../controller/profileController';
 import { profileVenueIndex, profileVenueStore, profileVenueStoreValidate, profileVenueUpdate, profileVenueUpdateValidate } from '../controller/profileVenueController';
 
@@ -12,6 +13,7 @@ const route = express.Router();
 route.get('/', profileIndex);
 route.post('/', profileStoreValidate, profileStore);
 route.put('/', profileUpdateValidate, profileUpdate);
+route.post('/change', profilePictureValidate, profileChange);
 
 // Route List Venue
 route.get('/venue', profileVenueIndex);
