@@ -1,7 +1,7 @@
 import { Response, NextFunction } from "express";
 import { body, validationResult, ValidationChain } from 'express-validator';
-import { cultureCategory, venueAttribute, venueProfile, venueProfileModel } from "@appitzr-project/db-model";
-import { RequestAuthenticated, userDetail, validateGroup } from "@base-pojokan/auth-aws-cognito";
+import { userProfile, userProfileModel, memberAttribute } from "@appitzr-project/db-model";
+import { RequestAuthenticated, userDetail } from "@base-pojokan/auth-aws-cognito";
 import * as AWS from 'aws-sdk';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -12,32 +12,16 @@ const ddb = new AWS.DynamoDB.DocumentClient({ endpoint: process.env.DYNAMODB_LOC
  * Venue Profile Store Validation with Express Validator
  */
 export const profileStoreValidate : ValidationChain[] = [
-  body('venueName').notEmpty().isString(),
-  body('bankBSB').notEmpty().isString(),
-  body('bankName').notEmpty().isString(),
-  body('bankAccountNo').notEmpty().isString(),
-  body('phoneNumber').notEmpty().isString(),
-  body('address').notEmpty().isString(),
-  body('postalCode').notEmpty().isNumeric(),
-  body('mapLong').notEmpty().isNumeric(),
-  body('mapLat').notEmpty().isNumeric(),
-  body('cultureCategory').notEmpty().isIn(cultureCategory),
+  body('memberName').notEmpty().isString(),
+  body('mobileNumber').notEmpty().isString(),
 ];
 
 /**
  * Venue Profile Update Validation with Express Validator
  */
 export const profileUpdateValidate : ValidationChain[] = [
-  body('venueName').notEmpty().isString(),
-  body('bankBSB').notEmpty().isString(),
-  body('bankName').notEmpty().isString(),
-  body('bankAccountNo').notEmpty().isString(),
-  body('phoneNumber').notEmpty().isString(),
-  body('address').notEmpty().isString(),
-  body('postalCode').notEmpty().isNumeric(),
-  body('mapLong').notEmpty().isNumeric(),
-  body('mapLat').notEmpty().isNumeric(),
-  body('cultureCategory').notEmpty().isIn(cultureCategory),
+  body('memberName').notEmpty().isString(),
+  body('mobileNumber').notEmpty().isString(),
 ];
 
 /**
@@ -54,16 +38,16 @@ export const profileIndex = async (
 ) => {
   try {
     // validate group
-    const user = await validateGroup(req, "venue");
+    const user = userDetail(req);
 
     // dynamodb parameter
     const paramDB : AWS.DynamoDB.DocumentClient.GetItemInput = {
-      TableName: venueProfileModel.TableName,
+      TableName: userProfileModel.TableName,
       Key: {
-        venueEmail: user.email,
+        email: user.email,
         cognitoId: user.sub
       },
-      AttributesToGet: venueAttribute
+      AttributesToGet: memberAttribute
     }
 
     // query to database
@@ -104,32 +88,24 @@ export const profileStore = async (
     }
 
     // get input
-    const venue : venueProfile = req.body;
+    const member : userProfile = req.body;
 
-    // venue profile input with typescript definition
-    const venueInput : venueProfile = {
+    // member profile input with typescript definition
+    const memberInput : userProfile = {
       id: uuidv4(),
       cognitoId: user?.sub,
-      venueEmail: user?.email,
-      venueName: venue.venueName,
-      bankBSB: venue.bankBSB,
-      bankName: venue.bankName,
-      bankAccountNo: venue.bankAccountNo,
-      phoneNumber: venue.phoneNumber,
-      address: venue.address,
-      postalCode: venue.postalCode,
-      mapLong: venue.mapLong,
-      mapLat: venue.mapLat,
-      cultureCategory: venue.cultureCategory,
+      email: user?.email,
+      memberName: member.memberName,
+      mobileNumber: member.mobileNumber,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     }
 
     // dynamodb parameter
     const paramsDB : AWS.DynamoDB.DocumentClient.PutItemInput = {
-      TableName: venueProfileModel.TableName,
-      Item: venueInput,
-      ConditionExpression: 'attribute_not_exists(venueEmail)'
+      TableName: userProfileModel.TableName,
+      Item: memberInput,
+      ConditionExpression: 'attribute_not_exists(email)'
     }
 
     // save data to database
@@ -164,7 +140,7 @@ export const profileUpdate = async (
 ) => {
   try {
     // validate group
-    const user = await validateGroup(req, "venue");
+    const user = userDetail(req);
 
     // exapress validate input
     const errors = validationResult(req);
@@ -173,44 +149,28 @@ export const profileUpdate = async (
     }
 
     // get input
-    const venue : venueProfile = req.body;
+    const member : userProfile = req.body;
 
     // dynamodb parameter
     const paramsDB : AWS.DynamoDB.DocumentClient.UpdateItemInput = {
-      TableName: venueProfileModel.TableName,
+      TableName: userProfileModel.TableName,
       Key: {
-        venueEmail: user.email,
+        email: user.email,
         cognitoId: user.sub
       },
       UpdateExpression: `
         set
-          venueName = :vn,
-          bankBSB = :bbsb,
-          bankName = :bn,
-          bankAccountNo = :ban,
-          phoneNumber = :pn,
-          address = :adrs,
-          postalCode = :pc,
-          mapLong = :mlong,
-          mapLat = :mlat,
-          cultureCategory = :ccat,
+          memberName = :nm,
+          mobileNumber = :mn,
           updatedAt = :ua
       `,
       ExpressionAttributeValues: {
-        ':vn': venue.venueName,
-        ':bbsb': venue.bankBSB,
-        ':bn': venue.bankName,
-        ':ban': venue.bankAccountNo,
-        ':pn': venue.phoneNumber,
-        ':adrs': venue.address,
-        ':pc': venue.postalCode,
-        ':mlong': venue.mapLong,
-        ':mlat': venue.mapLat,
-        ':ccat': venue.cultureCategory,
+        ':nm': member.memberName,
+        ':mn': member.mobileNumber,
         ':ua': new Date().toISOString(),
       },
       ReturnValues: 'UPDATED_NEW',
-      ConditionExpression: 'attribute_exists(venueEmail)'
+      ConditionExpression: 'attribute_exists(email)'
     }
 
     // save data to database
