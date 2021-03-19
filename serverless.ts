@@ -15,9 +15,10 @@ const serverlessConfiguration: Serverless = {
         runtime: 'nodejs12.x',
         region: '${opt:region, "ap-southeast-2"}',
         stage: '${opt:stage, "dev"}',
-        memorySize: 128,
+        memorySize: 256,
+        timeout: 25,
         apiGateway: {
-            minimumCompressionSize: 1024,
+            minimumCompressionSize: 0,
             binaryMediaTypes: [ '*/*' ],
         },
         environment: {
