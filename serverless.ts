@@ -37,7 +37,8 @@ const serverlessConfiguration: Serverless = {
                     "dynamodb:UpdateItem"
                 ],
                 Resource: [
-                    'arn:aws:dynamodb:${opt:region, "ap-southeast-2"}:${env:AWS_ACCOUNT_ID}:table/${env:NODE_ENV}_VenueProfile'
+                    'arn:aws:dynamodb:${opt:region, "ap-southeast-2"}:${env:AWS_ACCOUNT_ID}:table/${env:NODE_ENV}_VenueProfile',
+                    'arn:aws:dynamodb:${opt:region, "ap-southeast-2"}:${env:AWS_ACCOUNT_ID}:table/${env:NODE_ENV}_UserProfile',
                 ],
             },
         ],
@@ -92,7 +93,7 @@ const serverlessConfiguration: Serverless = {
         customDomain: {
             domainName: '${self:custom.project.${opt:stage, "dev"}}',
             certificateName: '${self:custom.project.${opt:stage, "dev"}}',
-            basePath: 'venueprofile',
+            basePath: 'profile',
             stage: '${opt:stage, "dev"}',
             createRoute53Record: true,
             endpointType: 'regional',
