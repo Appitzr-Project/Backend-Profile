@@ -55,6 +55,7 @@ jobs:
           COGNITO_POOL_ID: ${{ secrets.COGNITO_POOL_ID }}
           AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
           NODE_ENV: DEV
+          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
 
   done:
     runs-on: ubuntu-latest
