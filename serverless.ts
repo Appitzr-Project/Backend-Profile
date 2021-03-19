@@ -18,10 +18,15 @@ const serverlessConfiguration: Serverless = {
         memorySize: 128,
         apiGateway: {
             minimumCompressionSize: 1024,
+            binaryMediaTypes: [
+                'image/png',
+                'image/jpeg'
+            ],
         },
         environment: {
             AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
-            NODE_ENV: '${env:NODE_ENV}'
+            NODE_ENV: '${env:NODE_ENV}',
+            AWS_S3_BUCKET: '${env:AWS_S3_BUCKET}'
         },
         // Grant Access to DynamoDB
         iamRoleStatements: [
@@ -41,6 +46,18 @@ const serverlessConfiguration: Serverless = {
                     'arn:aws:dynamodb:${opt:region, "ap-southeast-2"}:${env:AWS_ACCOUNT_ID}:table/${env:NODE_ENV}_UserProfile',
                 ],
             },
+            {
+                Effect: 'Allow',
+                Action: [
+                    "s3:GetObject",
+                    "s3:PutObject",
+                    "s3:PutObjectAcl"
+                ],
+                Resource: [
+                    'arn:aws:s3:::${env:AWS_S3_BUCKET}',
+                    'arn:aws:s3:::${env:AWS_S3_BUCKET}/*'
+                ]
+            }
         ],
     },
     functions: {

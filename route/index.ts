@@ -1,14 +1,24 @@
 import * as express from 'express';
 import { Request, Response } from 'express';
-import { profileIndex, profileStore, profileStoreValidate, profileUpdate, profileUpdateValidate } from '../controller/profileController';
+import {
+    profileChange,
+    profileIndex, profilePictureValidate, profileStore, profileStoreValidate, profileUpdate, profileUpdateValidate
+} from '../controller/profileController';
+import { profileVenueIndex, profileVenueStore, profileVenueStoreValidate, profileVenueUpdate, profileVenueUpdateValidate } from '../controller/profileVenueController';
 
 // Route Declare
 const route = express.Router();
 
-// Route List
-route.get('/venue', profileIndex);
-route.post('/venue', profileStoreValidate, profileStore);
-route.put('/venue', profileUpdateValidate, profileUpdate);
+// Route List Member
+route.get('/', profileIndex);
+route.post('/', profileStoreValidate, profileStore);
+route.put('/', profileUpdateValidate, profileUpdate);
+route.post('/change', profilePictureValidate, profileChange);
+
+// Route List Venue
+route.get('/venue', profileVenueIndex);
+route.post('/venue', profileVenueStoreValidate, profileVenueStore);
+route.put('/venue', profileVenueUpdateValidate, profileVenueUpdate);
 
 // health check api
 route.get('/health-check', (req: Request, res: Response) => {
