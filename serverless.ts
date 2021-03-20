@@ -15,13 +15,11 @@ const serverlessConfiguration: Serverless = {
         runtime: 'nodejs12.x',
         region: '${opt:region, "ap-southeast-2"}',
         stage: '${opt:stage, "dev"}',
-        memorySize: 128,
+        memorySize: 256,
+        timeout: 15,
         apiGateway: {
-            minimumCompressionSize: 1024,
-            binaryMediaTypes: [
-                'image/png',
-                'image/jpeg'
-            ],
+            minimumCompressionSize: 0,
+            binaryMediaTypes: [ '*/*' ],
         },
         environment: {
             AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
@@ -57,6 +55,13 @@ const serverlessConfiguration: Serverless = {
                     'arn:aws:s3:::${env:AWS_S3_BUCKET}',
                     'arn:aws:s3:::${env:AWS_S3_BUCKET}/*'
                 ]
+            },
+            {
+                Effect: 'Allow',
+                Action: [
+                    "cognito-idp:AdminAddUserToGroup",
+                ],
+                Resource: '${self:custom.project.cognito}'
             }
         ],
     },
