@@ -60,6 +60,8 @@ const serverlessConfiguration: Serverless = {
             {
                 Effect: 'Allow',
                 Action: [
+                    "cognito-identity:*",
+                    "cognito-sync:*",
                     "cognito-idp:AddCustomAttributes",
                     "cognito-idp:AdminAddUserToGroup",
                     "cognito-idp:AdminGetUser",
