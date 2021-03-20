@@ -37,7 +37,10 @@ export const profileUpdateValidate : ValidationChain[] = [
  * And Format .jpeg, .jpg, and .png
  */
 export const profilePictureValidate : any[] = [
+  // single upload middleware
   multerUpload.single('profilePicture'),
+
+  // express validator size and mime type
   body('profilePicture')
     .custom((value, {req}) => {
       // size limit 5 MB in byte
@@ -241,7 +244,7 @@ export const profileChange = async (
 
     // get file upload
     // types from Global Express
-    const fileUpload  = req.file;
+    const fileUpload : Express.Multer.File = req.file;
 
     // file extention
     let fileExtention : string;
@@ -255,10 +258,10 @@ export const profileChange = async (
     const fileName : string = uuidv4() + fileExtention;
 
     // generate path directory
-    const date = new Date();
-    const year : number = date.getFullYear();
-    const month : number = date.getMonth() + 1;
-    const day : number = date.getDate();
+    const date  = new Date();
+    const year  : number  = date.getFullYear();
+    const month : number  = date.getMonth() + 1;
+    const day   : number  = date.getDate();
 
     // generate filename with path
     const fullFileName : string = `${year}/${month}/${day}/${fileName}`;
@@ -306,7 +309,7 @@ export const profileChange = async (
     return res.status(200).json({
       code: 200,
       message: 'success',
-      data: queryDB
+      data: queryDB?.Attributes
     });
   } catch (e) {
     console.log(e);
