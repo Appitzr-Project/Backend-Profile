@@ -117,7 +117,7 @@ const serverlessConfiguration: Serverless = {
             },
         },
         project: {
-            cognito: '${env:COGNITO_POOL_ID}',
+            cognito: 'arn:aws:cognito-idp:${opt:region, "ap-southeast-2"}:${env:AWS_ACCOUNT_ID}:userpool/${env:COGNITO_POOL_ID}',
             dev: 'api.dev.appetizr.co',
             prod: 'api.appetizr.co',
         },
