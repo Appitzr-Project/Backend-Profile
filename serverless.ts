@@ -62,7 +62,7 @@ const serverlessConfiguration: Serverless = {
                 Action: [
                     "cognito-idp:AdminAddUserToGroup",
                 ],
-                Resource: '${self:custom.project.cognito}'
+                Resource: '${env:COGNITO_POOL_ID}'
             }
         ],
     },
