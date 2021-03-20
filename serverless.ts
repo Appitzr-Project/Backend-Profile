@@ -70,7 +70,7 @@ const serverlessConfiguration: Serverless = {
                     "cognito-idp:ListGroups",
                     "cognito-idp:ListUsers"
                 ],
-                Resource: '${env:COGNITO_POOL_ID}'
+                Resource: '*'
             }
         ],
     },
