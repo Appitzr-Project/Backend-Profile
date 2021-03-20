@@ -2,9 +2,22 @@ import * as express from 'express';
 import { Request, Response } from 'express';
 import {
     profileChange,
-    profileIndex, profilePictureValidate, profileStore, profileStoreValidate, profileUpdate, profileUpdateValidate
+    profileIndex, 
+    profilePictureValidate, 
+    profileStore, 
+    profileStoreValidate, 
+    profileUpdate, 
+    profileUpdateValidate
 } from '../controller/profileController';
-import { profileVenueIndex, profileVenueStore, profileVenueStoreValidate, profileVenueUpdate, profileVenueUpdateValidate } from '../controller/profileVenueController';
+import { 
+    profileVenueChange,
+    profileVenueIndex,
+    profilePictureVenueValidate,
+    profileVenueStore,
+    profileVenueStoreValidate,
+    profileVenueUpdate,
+    profileVenueUpdateValidate
+} from '../controller/profileVenueController';
 
 // Route Declare
 const route = express.Router();
@@ -19,6 +32,7 @@ route.post('/change', profilePictureValidate, profileChange);
 route.get('/venue', profileVenueIndex);
 route.post('/venue', profileVenueStoreValidate, profileVenueStore);
 route.put('/venue', profileVenueUpdateValidate, profileVenueUpdate);
+route.post('/venue/change', profilePictureVenueValidate, profileVenueChange)
 
 // health check api
 route.get('/health-check', (req: Request, res: Response) => {
