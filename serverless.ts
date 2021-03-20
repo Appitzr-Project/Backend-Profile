@@ -55,6 +55,13 @@ const serverlessConfiguration: Serverless = {
                     'arn:aws:s3:::${env:AWS_S3_BUCKET}',
                     'arn:aws:s3:::${env:AWS_S3_BUCKET}/*'
                 ]
+            },
+            {
+                Effect: 'Allow',
+                Action: [
+                    "cognito-idp:AdminAddUserToGroup",
+                ],
+                Resource: '${self:custom.project.cognito}'
             }
         ],
     },
