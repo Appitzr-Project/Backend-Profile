@@ -174,6 +174,16 @@ export const profileVenueStore = async (
     // save data to database
     await ddb.put(paramsDB).promise();
 
+    // add user to group cognito
+    const cognitoPool = new AWS.CognitoIdentityServiceProvider();
+    const addToGroup = await cognitoPool.adminAddUserToGroup({
+      UserPoolId: process.env.COGNITO_POOL_ID,
+      GroupName: 'venue',
+      Username: String(req?.context?.authorizer?.claims['username'])
+    }).promise();
+
+    console.log(addToGroup)
+
     // return result
     return res.status(200).json({
       code: 200,
