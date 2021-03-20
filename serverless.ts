@@ -60,7 +60,13 @@ const serverlessConfiguration: Serverless = {
             {
                 Effect: 'Allow',
                 Action: [
+                    "cognito-idp:AddCustomAttributes",
                     "cognito-idp:AdminAddUserToGroup",
+                    "cognito-idp:AdminGetUser",
+                    "cognito-idp:AdminListGroupsForUser",
+                    "cognito-idp:GetGroup",
+                    "cognito-idp:ListGroups",
+                    "cognito-idp:ListUsers"
                 ],
                 Resource: '${env:COGNITO_POOL_ID}'
             }
