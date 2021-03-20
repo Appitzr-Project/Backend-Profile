@@ -271,7 +271,7 @@ export const profileChange = async (
     const S3 = new AWS.S3();
     
     // S3 Action Upload Fsile
-    const uploadToS3 = await S3.upload({
+    await S3.upload({
       ACL: 'public-read',
       Bucket: process.env.AWS_S3_BUCKET,
       Body: Buffer.from(fs.readFileSync(fileUpload.path, 'base64'), 'base64'),
@@ -279,43 +279,34 @@ export const profileChange = async (
       ContentType: fileUpload.mimetype,
     }).promise();
 
-    // // get input
-    // const member : userProfile = req.body;
+    // dynamodb parameter
+    const paramsDB : AWS.DynamoDB.DocumentClient.UpdateItemInput = {
+      TableName: userProfileModel.TableName,
+      Key: {
+        email: user.email,
+        cognitoId: user.sub
+      },
+      UpdateExpression: `
+        set
+          profilePicture = :pp,
+          updatedAt = :ua
+      `,
+      ExpressionAttributeValues: {
+        ':pp': fileURL,
+        ':ua': new Date().toISOString(),
+      },
+      ReturnValues: 'UPDATED_NEW',
+      ConditionExpression: 'attribute_exists(email)'
+    }
 
-    // // dynamodb parameter
-    // const paramsDB : AWS.DynamoDB.DocumentClient.UpdateItemInput = {
-    //   TableName: userProfileModel.TableName,
-    //   Key: {
-    //     email: user.email,
-    //     cognitoId: user.sub
-    //   },
-    //   UpdateExpression: `
-    //     set
-    //       profilePicture = :nm,
-    //       mobileNumber = :mn,
-    //       updatedAt = :ua
-    //   `,
-    //   ExpressionAttributeValues: {
-    //     ':pp': member.memberName,
-    //     ':mn': member.mobileNumber,
-    //     ':ua': new Date().toISOString(),
-    //   },
-    //   ReturnValues: 'UPDATED_NEW',
-    //   ConditionExpression: 'attribute_exists(email)'
-    // }
-
-    // // save data to database
-    // const queryDB = await ddb.update(paramsDB).promise();
+    // save data to database
+    const queryDB = await ddb.update(paramsDB).promise();
 
     // return result
     return res.status(200).json({
       code: 200,
       message: 'success',
-      data: {
-        url: fileURL,
-        s3: uploadToS3,
-        file: fileUpload
-      }
+      data: queryDB
     });
   } catch (e) {
     console.log(e);
