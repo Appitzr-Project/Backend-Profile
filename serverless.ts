@@ -16,7 +16,7 @@ const serverlessConfiguration: Serverless = {
         region: '${opt:region, "ap-southeast-2"}',
         stage: '${opt:stage, "dev"}',
         memorySize: 256,
-        timeout: 25,
+        timeout: 15,
         apiGateway: {
             minimumCompressionSize: 0,
             binaryMediaTypes: [ '*/*' ],
