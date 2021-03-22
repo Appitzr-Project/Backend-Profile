@@ -16,8 +16,8 @@ jobs:
         with:
           body: |
             Commit telah kami terima, saat ini code terbaru akan di Deploy secara automatis ke:
-            - Domain: **http://api.appitzr.co/venueprofile**
-            - Deploy Status: **https://github.com/Appitzr-Project/Backend-Venue-Profile/actions**
+            - Domain: **http://api.appitzr.co/profile**
+            - Deploy Status: **https://github.com/Appitzr-Project/Backend-Profile/actions**
             
             Anda akan menerima notifikasi jika deploy telah selesai dilakukan, harap menunggu notifikasi selanjutnya.!
 
@@ -54,6 +54,8 @@ jobs:
           SLS_DEBUG: "*"
           COGNITO_POOL_ID: ${{ secrets.COGNITO_POOL_ID }}
           AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+          NODE_ENV: PROD
+          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
 
   done:
     runs-on: ubuntu-latest
@@ -64,7 +66,7 @@ jobs:
         with:
           body: |
             Deploy sukses, anda bisa mengecek preview website di:
-            - Domain: **http://api.appitzr.co/venueprofile**
-            - Deploy Status: **https://github.com/Appitzr-Project/Backend-Venue-Profile/actions**
+            - Domain: **http://api.appitzr.co/profile**
+            - Deploy Status: **https://github.com/Appitzr-Project/Backend-Profile/actions**
 
             Jika ada kendala, jangan ragu untuk menghubungi team devops.!

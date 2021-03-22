@@ -208,4 +208,7 @@ dist
 # Webpack Deployer
 .webpack
 
+# Ignore Yarn Lock
+yarn.lock
+
 # End of https://www.toptal.com/developers/gitignore/api/jetbrains+all,node

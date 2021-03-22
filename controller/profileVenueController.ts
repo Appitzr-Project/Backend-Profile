@@ -1,7 +1,7 @@
 import { Response, NextFunction } from "express";
 import { body, validationResult, ValidationChain } from 'express-validator';
-import { userProfile, userProfileModel, memberAttribute } from "@appitzr-project/db-model";
-import { RequestAuthenticated, userDetail } from "@base-pojokan/auth-aws-cognito";
+import { cultureCategory, venueAttribute, venueProfile, venueProfileModel } from "@appitzr-project/db-model";
+import { RequestAuthenticated, userDetail, validateGroup } from "@base-pojokan/auth-aws-cognito";
 import * as AWS from 'aws-sdk';
 import { v4 as uuidv4 } from 'uuid';
 import * as Multer from 'multer';
@@ -18,17 +18,33 @@ const multerUpload = Multer({ dest: '/tmp' });
 /**
  * Venue Profile Store Validation with Express Validator
  */
-export const profileStoreValidate : ValidationChain[] = [
-  body('memberName').notEmpty().isString(),
-  body('mobileNumber').notEmpty().isString(),
+export const profileVenueStoreValidate : ValidationChain[] = [
+  body('venueName').notEmpty().isString(),
+  body('bankBSB').notEmpty().isString(),
+  body('bankName').notEmpty().isString(),
+  body('bankAccountNo').notEmpty().isString(),
+  body('phoneNumber').notEmpty().isString(),
+  body('address').notEmpty().isString(),
+  body('postalCode').notEmpty().isNumeric(),
+  body('mapLong').notEmpty().isNumeric(),
+  body('mapLat').notEmpty().isNumeric(),
+  body('cultureCategory').notEmpty().isIn(cultureCategory),
 ];
 
 /**
  * Venue Profile Update Validation with Express Validator
  */
-export const profileUpdateValidate : ValidationChain[] = [
-  body('memberName').notEmpty().isString(),
-  body('mobileNumber').notEmpty().isString(),
+export const profileVenueUpdateValidate : ValidationChain[] = [
+  body('venueName').notEmpty().isString(),
+  body('bankBSB').notEmpty().isString(),
+  body('bankName').notEmpty().isString(),
+  body('bankAccountNo').notEmpty().isString(),
+  body('phoneNumber').notEmpty().isString(),
+  body('address').notEmpty().isString(),
+  body('postalCode').notEmpty().isNumeric(),
+  body('mapLong').notEmpty().isNumeric(),
+  body('mapLat').notEmpty().isNumeric(),
+  body('cultureCategory').notEmpty().isIn(cultureCategory),
 ];
 
 /**
@@ -36,7 +52,7 @@ export const profileUpdateValidate : ValidationChain[] = [
  * Maximum File Size Limit 5 Mb
  * And Format .jpeg, .jpg, and .png
  */
-export const profilePictureValidate : any[] = [
+export const profilePictureVenueValidate : any[] = [
   // single upload middleware
   multerUpload.single('profilePicture'),
 
@@ -70,23 +86,23 @@ export const profilePictureValidate : any[] = [
  * @param res
  * @param next
  */
-export const profileIndex = async (
+export const profileVenueIndex = async (
   req: RequestAuthenticated,
   res: Response,
   next: NextFunction
 ) => {
   try {
     // validate group
-    const user = userDetail(req);
+    const user = await validateGroup(req, "venue");
 
     // dynamodb parameter
     const paramDB : AWS.DynamoDB.DocumentClient.GetItemInput = {
-      TableName: userProfileModel.TableName,
+      TableName: venueProfileModel.TableName,
       Key: {
-        email: user.email,
+        venueEmail: user.email,
         cognitoId: user.sub
       },
-      AttributesToGet: memberAttribute
+      AttributesToGet: venueAttribute
     }
 
     // query to database
@@ -111,7 +127,7 @@ export const profileIndex = async (
  * @param next NextFunction
  * @returns 
  */
-export const profileStore = async (
+export const profileVenueStore = async (
   req: RequestAuthenticated,
   res: Response,
   next: NextFunction
@@ -127,28 +143,44 @@ export const profileStore = async (
     }
 
     // get input
-    const member : userProfile = req.body;
+    const venue : venueProfile = req.body;
 
-    // member profile input with typescript definition
-    const memberInput : userProfile = {
+    // venue profile input with typescript definition
+    const venueInput : venueProfile = {
       id: uuidv4(),
       cognitoId: user?.sub,
-      email: user?.email,
-      memberName: member.memberName,
-      mobileNumber: member.mobileNumber,
+      venueEmail: user?.email,
+      venueName: venue.venueName,
+      bankBSB: venue.bankBSB,
+      bankName: venue.bankName,
+      bankAccountNo: venue.bankAccountNo,
+      phoneNumber: venue.phoneNumber,
+      address: venue.address,
+      postalCode: venue.postalCode,
+      mapLong: venue.mapLong,
+      mapLat: venue.mapLat,
+      cultureCategory: venue.cultureCategory,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     }
 
     // dynamodb parameter
     const paramsDB : AWS.DynamoDB.DocumentClient.PutItemInput = {
-      TableName: userProfileModel.TableName,
-      Item: memberInput,
-      ConditionExpression: 'attribute_not_exists(email)'
+      TableName: venueProfileModel.TableName,
+      Item: venueInput,
+      ConditionExpression: 'attribute_not_exists(venueEmail)'
     }
 
     // save data to database
     await ddb.put(paramsDB).promise();
+
+    // add user to group cognito
+    const cognitoPool = new AWS.CognitoIdentityServiceProvider();
+    await cognitoPool.adminAddUserToGroup({
+      UserPoolId: process.env.COGNITO_POOL_ID,
+      GroupName: 'venue',
+      Username: user.sub
+    }).promise();
 
     // return result
     return res.status(200).json({
@@ -172,14 +204,14 @@ export const profileStore = async (
 };
 
 
-export const profileUpdate = async (
+export const profileVenueUpdate = async (
   req: RequestAuthenticated,
   res: Response,
   next: NextFunction
 ) => {
   try {
     // validate group
-    const user = userDetail(req);
+    const user = await validateGroup(req, "venue");
 
     // exapress validate input
     const errors = validationResult(req);
@@ -188,28 +220,44 @@ export const profileUpdate = async (
     }
 
     // get input
-    const member : userProfile = req.body;
+    const venue : venueProfile = req.body;
 
     // dynamodb parameter
     const paramsDB : AWS.DynamoDB.DocumentClient.UpdateItemInput = {
-      TableName: userProfileModel.TableName,
+      TableName: venueProfileModel.TableName,
       Key: {
-        email: user.email,
+        venueEmail: user.email,
         cognitoId: user.sub
       },
       UpdateExpression: `
         set
-          memberName = :nm,
-          mobileNumber = :mn,
+          venueName = :vn,
+          bankBSB = :bbsb,
+          bankName = :bn,
+          bankAccountNo = :ban,
+          phoneNumber = :pn,
+          address = :adrs,
+          postalCode = :pc,
+          mapLong = :mlong,
+          mapLat = :mlat,
+          cultureCategory = :ccat,
           updatedAt = :ua
       `,
       ExpressionAttributeValues: {
-        ':nm': member.memberName,
-        ':mn': member.mobileNumber,
+        ':vn': venue.venueName,
+        ':bbsb': venue.bankBSB,
+        ':bn': venue.bankName,
+        ':ban': venue.bankAccountNo,
+        ':pn': venue.phoneNumber,
+        ':adrs': venue.address,
+        ':pc': venue.postalCode,
+        ':mlong': venue.mapLong,
+        ':mlat': venue.mapLat,
+        ':ccat': venue.cultureCategory,
         ':ua': new Date().toISOString(),
       },
       ReturnValues: 'UPDATED_NEW',
-      ConditionExpression: 'attribute_exists(email)'
+      ConditionExpression: 'attribute_exists(venueEmail)'
     }
 
     // save data to database
@@ -227,7 +275,8 @@ export const profileUpdate = async (
   }
 };
 
-export const profileChange = async (
+
+export const profileVenueChange = async (
   req: RequestAuthenticated,
   res: Response,
   next: NextFunction
@@ -284,9 +333,9 @@ export const profileChange = async (
 
     // dynamodb parameter
     const paramsDB : AWS.DynamoDB.DocumentClient.UpdateItemInput = {
-      TableName: userProfileModel.TableName,
+      TableName: venueProfileModel.TableName,
       Key: {
-        email: user.email,
+        venueEmail: user.email,
         cognitoId: user.sub
       },
       UpdateExpression: `
@@ -299,7 +348,7 @@ export const profileChange = async (
         ':ua': new Date().toISOString(),
       },
       ReturnValues: 'UPDATED_NEW',
-      ConditionExpression: 'attribute_exists(email)'
+      ConditionExpression: 'attribute_exists(venueEmail)'
     }
 
     // save data to database

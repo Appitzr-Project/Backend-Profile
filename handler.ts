@@ -25,7 +25,7 @@ app.use(helmet());
 app.use(cors(corsOptions));
 
 // all router lists
-app.use('/venueprofile', routes);
+app.use('/profile', routes);
 
 // get all unrouted url
 app.all('*', (req: Request, res: Response, next: NextFunction) => {

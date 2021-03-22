@@ -1,7 +1,7 @@
 import type { Serverless } from 'serverless/aws';
 
 const serverlessConfiguration: Serverless = {
-    service: 'backend-venue-profile',
+    service: 'backend-profile',
     frameworkVersion: '2',
     // Add the serverless-webpack plugin
     plugins: [
@@ -15,12 +15,17 @@ const serverlessConfiguration: Serverless = {
         runtime: 'nodejs12.x',
         region: '${opt:region, "ap-southeast-2"}',
         stage: '${opt:stage, "dev"}',
-        memorySize: 128,
+        memorySize: 256,
+        timeout: 15,
         apiGateway: {
-            minimumCompressionSize: 1024,
+            minimumCompressionSize: 0,
+            binaryMediaTypes: [ '*/*' ],
         },
         environment: {
             AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
+            NODE_ENV: '${env:NODE_ENV}',
+            AWS_S3_BUCKET: '${env:AWS_S3_BUCKET}',
+            COGNITO_POOL_ID: '${env:COGNITO_POOL_ID}'
         },
         // Grant Access to DynamoDB
         iamRoleStatements: [
@@ -33,10 +38,39 @@ const serverlessConfiguration: Serverless = {
                     "dynamodb:Scan",
                     "dynamodb:BatchWriteItem",
                     "dynamodb:PutItem",
-                    "dynamodb:UpdateItem",
-                    "dynamodb:DeleteItem"
+                    "dynamodb:UpdateItem"
                 ],
-                Resource: 'arn:aws:dynamodb:${opt:region, "ap-southeast-2"}:${env:AWS_ACCOUNT_ID}:table/VenueProfile'
+                Resource: [
+                    'arn:aws:dynamodb:${opt:region, "ap-southeast-2"}:${env:AWS_ACCOUNT_ID}:table/${env:NODE_ENV}_VenueProfile',
+                    'arn:aws:dynamodb:${opt:region, "ap-southeast-2"}:${env:AWS_ACCOUNT_ID}:table/${env:NODE_ENV}_UserProfile',
+                ],
+            },
+            {
+                Effect: 'Allow',
+                Action: [
+                    "s3:GetObject",
+                    "s3:PutObject",
+                    "s3:PutObjectAcl"
+                ],
+                Resource: [
+                    'arn:aws:s3:::${env:AWS_S3_BUCKET}',
+                    'arn:aws:s3:::${env:AWS_S3_BUCKET}/*'
+                ]
+            },
+            {
+                Effect: 'Allow',
+                Action: [
+                    "cognito-identity:*",
+                    "cognito-sync:*",
+                    "cognito-idp:AddCustomAttributes",
+                    "cognito-idp:AdminAddUserToGroup",
+                    "cognito-idp:AdminGetUser",
+                    "cognito-idp:AdminListGroupsForUser",
+                    "cognito-idp:GetGroup",
+                    "cognito-idp:ListGroups",
+                    "cognito-idp:ListUsers"
+                ],
+                Resource: '*'
             }
         ],
     },
@@ -83,14 +117,14 @@ const serverlessConfiguration: Serverless = {
             },
         },
         project: {
-            cognito: '${env:COGNITO_POOL_ID}',
+            cognito: 'arn:aws:cognito-idp:${opt:region, "ap-southeast-2"}:${env:AWS_ACCOUNT_ID}:userpool/${env:COGNITO_POOL_ID}',
             dev: 'api.dev.appetizr.co',
             prod: 'api.appetizr.co',
         },
         customDomain: {
             domainName: '${self:custom.project.${opt:stage, "dev"}}',
             certificateName: '${self:custom.project.${opt:stage, "dev"}}',
-            basePath: 'venueprofile',
+            basePath: 'profile',
             stage: '${opt:stage, "dev"}',
             createRoute53Record: true,
             endpointType: 'regional',
