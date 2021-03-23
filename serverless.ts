@@ -19,7 +19,6 @@ const serverlessConfiguration: Serverless = {
         timeout: 15,
         apiGateway: {
             minimumCompressionSize: 1024,
-            binaryMediaTypes: ['*/*'],
         },
         environment: {
             AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
