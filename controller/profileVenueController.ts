@@ -18,8 +18,9 @@ const multerUpload = Multer({ dest: '/tmp' });
 /**
  * Venue Profile Store Validation with Express Validator
  */
-export const profileVenueStoreValidate : ValidationChain[] = [
+export const profileVenueStoreValidate: ValidationChain[] = [
   body('venueName').notEmpty().isString(),
+  body('venueEmail').optional().isString(),
   body('bankBSB').notEmpty().isString(),
   body('bankName').notEmpty().isString(),
   body('bankAccountNo').notEmpty().isString(),
@@ -34,8 +35,9 @@ export const profileVenueStoreValidate : ValidationChain[] = [
 /**
  * Venue Profile Update Validation with Express Validator
  */
-export const profileVenueUpdateValidate : ValidationChain[] = [
+export const profileVenueUpdateValidate: ValidationChain[] = [
   body('venueName').notEmpty().isString(),
+  body('venueEmail').optional().isString(),
   body('bankBSB').notEmpty().isString(),
   body('bankName').notEmpty().isString(),
   body('bankAccountNo').notEmpty().isString(),
@@ -52,23 +54,23 @@ export const profileVenueUpdateValidate : ValidationChain[] = [
  * Maximum File Size Limit 5 Mb
  * And Format .jpeg, .jpg, and .png
  */
-export const profilePictureVenueValidate : any[] = [
+export const profilePictureVenueValidate: any[] = [
   // single upload middleware
   multerUpload.single('profilePicture'),
 
   // express validator size and mime type
   body('profilePicture')
-    .custom((value, {req}) => {
+    .custom((value, { req }) => {
       // size limit 5 MB in byte
-      const fileLimit : number = 5242880;
+      const fileLimit: number = 5242880;
 
       // check if file exist
       // and size file under fileLimit
-      if(req.file && req.file.size < fileLimit) {
+      if (req.file && req.file.size < fileLimit) {
         // check mime type file
-        if(req.file.mimetype === 'image/png'){
+        if (req.file.mimetype === 'image/png') {
           return '.png';
-        } else if(req.file.mimetype === 'image/jpeg'){
+        } else if (req.file.mimetype === 'image/jpeg') {
           return '.jpeg';
         } else {
           throw new Error('Format Allowed: .jpeg, .jpg or .png');
@@ -96,7 +98,7 @@ export const profileVenueIndex = async (
     const user = await validateGroup(req, "venue");
 
     // dynamodb parameter
-    const paramDB : AWS.DynamoDB.DocumentClient.GetItemInput = {
+    const paramDB: AWS.DynamoDB.DocumentClient.GetItemInput = {
       TableName: venueProfileModel.TableName,
       Key: {
         venueEmail: user.email,
@@ -138,18 +140,18 @@ export const profileVenueStore = async (
 
     // exapress validate input
     const errors = validationResult(req);
-    if(!errors.isEmpty()) {
+    if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
 
     // get input
-    const venue : venueProfile = req.body;
+    const venue: venueProfile = req.body;
 
     // venue profile input with typescript definition
-    const venueInput : venueProfile = {
+    const venueInput: venueProfile = {
       id: uuidv4(),
       cognitoId: user?.sub,
-      venueEmail: user?.email,
+      venueEmail: venue.venueEmail ?? user?.email,
       venueName: venue.venueName,
       bankBSB: venue.bankBSB,
       bankName: venue.bankName,
@@ -165,7 +167,7 @@ export const profileVenueStore = async (
     }
 
     // dynamodb parameter
-    const paramsDB : AWS.DynamoDB.DocumentClient.PutItemInput = {
+    const paramsDB: AWS.DynamoDB.DocumentClient.PutItemInput = {
       TableName: venueProfileModel.TableName,
       Item: venueInput,
       ConditionExpression: 'attribute_not_exists(venueEmail)'
@@ -190,11 +192,11 @@ export const profileVenueStore = async (
     });
 
   } catch (e) {
-    
+
     /**
      * Return error kalau expression data udh ada
      */
-    if(e?.code == 'ConditionalCheckFailedException') {
+    if (e?.code == 'ConditionalCheckFailedException') {
       next(new Error('Data Already Exist.!'));
     }
 
@@ -215,15 +217,15 @@ export const profileVenueUpdate = async (
 
     // exapress validate input
     const errors = validationResult(req);
-    if(!errors.isEmpty()) {
+    if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
 
     // get input
-    const venue : venueProfile = req.body;
+    const venue: venueProfile = req.body;
 
     // dynamodb parameter
-    const paramsDB : AWS.DynamoDB.DocumentClient.UpdateItemInput = {
+    const paramsDB: AWS.DynamoDB.DocumentClient.UpdateItemInput = {
       TableName: venueProfileModel.TableName,
       Key: {
         venueEmail: user.email,
@@ -232,6 +234,7 @@ export const profileVenueUpdate = async (
       UpdateExpression: `
         set
           venueName = :vn,
+          venueEmail = :ve,
           bankBSB = :bbsb,
           bankName = :bn,
           bankAccountNo = :ban,
@@ -245,6 +248,7 @@ export const profileVenueUpdate = async (
       `,
       ExpressionAttributeValues: {
         ':vn': venue.venueName,
+        ':ve': venue.venueEmail ?? user.email,
         ':bbsb': venue.bankBSB,
         ':bn': venue.bankName,
         ':ban': venue.bankAccountNo,
@@ -287,33 +291,33 @@ export const profileVenueChange = async (
 
     // exapress validate input
     const errors = validationResult(req);
-    if(!errors.isEmpty()) {
+    if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
 
     // get file upload
     // types from Global Express
-    const fileUpload : Express.Multer.File = req.file;
+    const fileUpload: Express.Multer.File = req.file;
 
     // file extention
-    let fileExtention : string;
-    if(fileUpload.mimetype === 'image/png' ) {
+    let fileExtention: string;
+    if (fileUpload.mimetype === 'image/png') {
       fileExtention = '.png';
-    } else if(fileUpload.mimetype === 'image/jpeg') {
+    } else if (fileUpload.mimetype === 'image/jpeg') {
       fileExtention = '.jpeg';
     }
 
     // generate filename with uuid
-    const fileName : string = uuidv4() + fileExtention;
+    const fileName: string = uuidv4() + fileExtention;
 
     // generate path directory
-    const date  = new Date();
-    const year  : number  = date.getFullYear();
-    const month : number  = date.getMonth() + 1;
-    const day   : number  = date.getDate();
+    const date = new Date();
+    const year: number = date.getFullYear();
+    const month: number = date.getMonth() + 1;
+    const day: number = date.getDate();
 
     // generate filename with path
-    const fullFileName : string = `${year}/${month}/${day}/${fileName}`;
+    const fullFileName: string = `${year}/${month}/${day}/${fileName}`;
     // generate URL with Full Name
     const fileURL = 'https://' + process.env.AWS_S3_BUCKET + '/' + fullFileName;
 
@@ -321,7 +325,7 @@ export const profileVenueChange = async (
      * Upload File to AWS S3
      */
     const S3 = new AWS.S3();
-    
+
     // S3 Action Upload Fsile
     await S3.upload({
       ACL: 'public-read',
@@ -332,7 +336,7 @@ export const profileVenueChange = async (
     }).promise();
 
     // dynamodb parameter
-    const paramsDB : AWS.DynamoDB.DocumentClient.UpdateItemInput = {
+    const paramsDB: AWS.DynamoDB.DocumentClient.UpdateItemInput = {
       TableName: venueProfileModel.TableName,
       Key: {
         venueEmail: user.email,
