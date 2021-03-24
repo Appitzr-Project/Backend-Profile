@@ -20,7 +20,6 @@ const multerUpload = Multer({ dest: '/tmp' });
  */
 export const profileVenueStoreValidate: ValidationChain[] = [
   body('venueName').notEmpty().isString(),
-  body('venueEmail').optional().isString(),
   body('bankBSB').notEmpty().isString(),
   body('bankName').notEmpty().isString(),
   body('bankAccountNo').notEmpty().isString(),
@@ -37,7 +36,6 @@ export const profileVenueStoreValidate: ValidationChain[] = [
  */
 export const profileVenueUpdateValidate: ValidationChain[] = [
   body('venueName').notEmpty().isString(),
-  body('venueEmail').optional().isString(),
   body('bankBSB').notEmpty().isString(),
   body('bankName').notEmpty().isString(),
   body('bankAccountNo').notEmpty().isString(),
@@ -151,7 +149,7 @@ export const profileVenueStore = async (
     const venueInput: venueProfile = {
       id: uuidv4(),
       cognitoId: user?.sub,
-      venueEmail: venue.venueEmail ?? user?.email,
+      venueEmail: user?.email,
       venueName: venue.venueName,
       bankBSB: venue.bankBSB,
       bankName: venue.bankName,
@@ -234,7 +232,6 @@ export const profileVenueUpdate = async (
       UpdateExpression: `
         set
           venueName = :vn,
-          venueEmail = :ve,
           bankBSB = :bbsb,
           bankName = :bn,
           bankAccountNo = :ban,
@@ -248,7 +245,6 @@ export const profileVenueUpdate = async (
       `,
       ExpressionAttributeValues: {
         ':vn': venue.venueName,
-        ':ve': venue.venueEmail ?? user.email,
         ':bbsb': venue.bankBSB,
         ':bn': venue.bankName,
         ':ban': venue.bankAccountNo,
