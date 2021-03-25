@@ -87,7 +87,11 @@ const serverlessConfiguration: Serverless = {
                     http: {
                         method: 'ANY',
                         path: '/',
-                        cors: true,
+                        cors: {
+                            origins: '*',
+                            headers: '*',
+                            allowCredentials: true
+                        },
                         authorizer: {
                             type: 'COGNITO_USER_POOLS',
                             name: 'Cognito-1',
@@ -100,7 +104,11 @@ const serverlessConfiguration: Serverless = {
                     http: {
                         method: 'ANY',
                         path: '/{proxy+}',
-                        cors: true,
+                        cors: {
+                            origins: '*',
+                            headers: '*',
+                            allowCredentials: true
+                        },
                         authorizer: {
                             type: 'COGNITO_USER_POOLS',
                             name: 'Cognito-2',
