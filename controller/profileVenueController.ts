@@ -6,6 +6,7 @@ import * as AWS from 'aws-sdk';
 import { v4 as uuidv4 } from 'uuid';
 import * as Multer from 'multer';
 import * as fs from 'fs';
+import { Console } from "console";
 
 // declare database dynamodb
 const ddb = new AWS.DynamoDB.DocumentClient({ endpoint: process.env.DYNAMODB_LOCAL, convertEmptyValues: true });
@@ -284,6 +285,7 @@ export const profileVenueChange = async (
   try {
     // validate group
     const user = userDetail(req);
+    
 
     // exapress validate input
     const errors = validationResult(req);
@@ -366,6 +368,37 @@ export const profileVenueChange = async (
   }
 };
 
+/**
+ * Validator Image Input For Single File
+ * Maximum File Size Limit 5 Mb
+ * And Format .jpeg, .jpg, and .png
+ */
+export const venueBannerValidate: any[] = [
+  // single upload middleware
+  multerUpload.single('banner'),
+
+  // express validator size and mime type
+  body('banner')
+    .custom((value, { req }) => {
+      // size limit 5 MB in byte
+      const fileLimit: number = 5242880;
+
+      // check if file exist
+      // and size file under fileLimit
+      if (req.file && req.file.size < fileLimit) {
+        // check mime type file
+        if (req.file.mimetype === 'image/png') {
+          return '.png';
+        } else if (req.file.mimetype === 'image/jpeg') {
+          return '.jpeg';
+        } else {
+          throw new Error('Format Allowed: .jpeg, .jpg or .png');
+        }
+      } else {
+        throw new Error('Upload File Required With Maximum File Size 5 MB/File.!');
+      }
+    }),
+];
 export const venueBannerUpdate = async (
   req: RequestAuthenticated,
   res: Response,
@@ -373,7 +406,7 @@ export const venueBannerUpdate = async (
 ) => {
   try {
     // validate group
-    const user = await validateGroup(req, 'venue');
+    const user = userDetail(req);
 
     // exapress validate input
     const errors = validationResult(req);
@@ -420,12 +453,12 @@ export const venueBannerUpdate = async (
       Key: fullFileName,
       ContentType: fileUpload.mimetype,
     }).promise();
-
+    
     // dynamodb parameter
     const paramsDB: AWS.DynamoDB.DocumentClient.UpdateItemInput = {
       TableName: venueProfileModel.TableName,
       Key: {
-        email: user.email,
+        venueEmail: user.email,
         cognitoId: user.sub
       },
       UpdateExpression: `
@@ -438,7 +471,7 @@ export const venueBannerUpdate = async (
         ':ua': new Date().toISOString(),
       },
       ReturnValues: 'UPDATED_NEW',
-      ConditionExpression: 'attribute_exists(email)'
+      ConditionExpression: 'attribute_exists(venueEmail)'
     }
 
     // save data to database
