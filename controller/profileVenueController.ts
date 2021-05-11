@@ -5,8 +5,7 @@ import { RequestAuthenticated, userDetail, validateGroup } from "@base-pojokan/a
 import * as AWS from 'aws-sdk';
 import { v4 as uuidv4 } from 'uuid';
 import * as Multer from 'multer';
-import * as fs from 'fs';
-import { Console } from "console";
+import * as fs from 'fs'
 
 // declare database dynamodb
 const ddb = new AWS.DynamoDB.DocumentClient({ endpoint: process.env.DYNAMODB_LOCAL, convertEmptyValues: true });
