@@ -16,7 +16,9 @@ import {
     profileVenueStore,
     profileVenueStoreValidate,
     profileVenueUpdate,
-    profileVenueUpdateValidate
+    profileVenueUpdateValidate,
+    venueBannerUpdate,
+    venueBannerValidate
 } from '../controller/profileVenueController';
 
 // Route Declare
@@ -33,6 +35,7 @@ route.get('/venue', profileVenueIndex);
 route.post('/venue', profileVenueStoreValidate, profileVenueStore);
 route.put('/venue', profileVenueUpdateValidate, profileVenueUpdate);
 route.post('/venue/change', profilePictureVenueValidate, profileVenueChange)
+route.post('/venue/banner', venueBannerValidate, venueBannerUpdate)
 
 // health check api
 route.get('/health-check', (req: Request, res: Response) => {
