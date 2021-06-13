@@ -28,7 +28,7 @@ export const profileVenueStoreValidate: ValidationChain[] = [
   body('postalCode').notEmpty().isNumeric(),
   body('mapLong').notEmpty().isNumeric(),
   body('mapLat').notEmpty().isNumeric(),
-  body('cultureCategory').notEmpty().isIn(cultureCategory),
+  body('cultureCategory').notEmpty(),
 ];
 
 /**
@@ -44,7 +44,7 @@ export const profileVenueUpdateValidate: ValidationChain[] = [
   body('postalCode').notEmpty().isNumeric(),
   body('mapLong').notEmpty().isNumeric(),
   body('mapLat').notEmpty().isNumeric(),
-  body('cultureCategory').notEmpty().isIn(cultureCategory),
+  body('cultureCategory').notEmpty(),
 ];
 
 /**
@@ -284,7 +284,7 @@ export const profileVenueChange = async (
   try {
     // validate group
     const user = userDetail(req);
-    
+
 
     // exapress validate input
     const errors = validationResult(req);
@@ -452,7 +452,7 @@ export const venueBannerUpdate = async (
       Key: fullFileName,
       ContentType: fileUpload.mimetype,
     }).promise();
-    
+
     // dynamodb parameter
     const paramsDB: AWS.DynamoDB.DocumentClient.UpdateItemInput = {
       TableName: venueProfileModel.TableName,
